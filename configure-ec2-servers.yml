@@ -1,0 +1,28 @@
+- name: Install Python3, docker, docker-compose
+  hosts: all 
+  become: yes
+  gather_facts: False
+  tasks:
+    - name: Install python3 and docker
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+      yum:
+        name:
+          - python3
+          - docker
+        update_cache: yes
+        state: present
+    - name: Install docker-compose
+      get-url: https://github.com/docker/compose/releases/download/1.25.1-rc1/docker-compose-Linux-x86_64
+      dest: /usr/local/bin/docker-compose
+      mode: +x
+    - name: Start Docker-daemon
+      systemd:
+         name: docker
+         state: started
+    - name: Install Docker-Python module
+      pip:
+        name:
+          - docker
+          - docker-compose
+          
